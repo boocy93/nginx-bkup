@@ -1,5 +1,5 @@
 #!/bin/bash
-# Webdriectory backup script my DecentM
+# Webdriectory backup script by DecentM
 # This script creates a compressed tarball from your webroot and your databases
 # You need a database user with these global privileges: SELECT, SHOW DATABASES, LOCK TABLES, RELOAD
 ####################################################################################################
