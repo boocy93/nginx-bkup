@@ -1,7 +1,7 @@
 #!/bin/bash
-# Webdriectory backup script by DecentM
+# Webdirectory backup script by DecentM
 # This script creates a compressed tarball from your webroot and your databases
-# You need a database user with these global privileges: SELECT, SHOW DATABASES, LOCK TABLES, RELOAD
+# To be able to backup databases, you need a mysql user with these global privileges: SELECT, SHOW DATABASES, LOCK TABLES, RELOAD
 ####################################################################################################
 
 add_option() {
@@ -14,7 +14,7 @@ add_option "optionsc" "1";
 ## CONFIG START ## DO EDIT ##
 #############################
 
-## ! You must only edit the second arguement in each of the add_option lines. ! ##
+## ! You must only edit the second argument in each of the add_option lines ! ##
 
 ## This is the date format, which will be used in backup names
 add_option "bkupdate" '$(date +""%Y.%m.%d-%H%M.%S"")'
@@ -58,23 +58,24 @@ add_option "dbpw" 'database_password'
 ## Default: Database\|information_schema\|performance_schema
 add_option "ignoredbs" "Database\|information_schema\|performance_schema"
 
-## Later, I'd like to make all the options be loaded from an external textfile
+## Note: Later, I'd like to make all the options be loaded from an external textfile
 ###################################
 ## END OF CONFIG ## STOP EDITING ##
 ###################################
 
 ## SCRIPT START ## DO NOT EDIT ##
-# Debug level can go from 0 to 5, and is set from the first argument ## DO NOT EDIT ##
+# Debug level can go from 0 to 5, and is set from the first argument
 if [ -f $1 ]; then
         add_option "debuglv" "0";
 else
         add_option "debuglv" "$1";
 fi
 
-# Save the current UNIX time, to be able to measure approximate run time
+# Save the current UNIX timestamp to be able to measure approximate run time
 add_option "bkupstart" '$(date +""%s"")'
 
-# Concatenate a random string to the filenames, so that even if the script is ran multiple times each second, the chance of overwriting files is minimal at best
+# Concatenate a random string to the backup filenames, so that even if the script is ran multiple times each second,
+# the chance of overwriting files is minimal at best
 add_option "bkupid" "$bkupdate-\#$RANDOM"
 
 # Define debugging functions
@@ -140,11 +141,11 @@ printf "\n"
 debuglog "$webroot done"
 dbgps
 
-# Back up databases.
-# Planned feature: if no database username is specified, skip this step
+# Back up databases
+# Note: Planned feature: if no database username is specified, skip this step
 printf "\nBacking up database(s)...\n"
 
-# Get all database names from the server, and run the loop for every not skipped database
+# Get all database names from the mysql server, and run the loop for every not skipped database
 for I in $(mysql -u$dbus -p$dbpw -e 'show databases' -s --skip-column-names | grep -Ev "($ignoredbs)"); do
         dbgps
 
@@ -178,7 +179,7 @@ ls -lt --block-size=MB
 printf "\n"
 dbgps
 
-# Use "cd -" to switch back to the directory the user was before running the script
+# Use "cd -" to switch back to the directory the user was at before running the script
 echo "Switching back"
 cd -
 dbgps
