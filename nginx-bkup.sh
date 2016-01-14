@@ -159,13 +159,13 @@ done
 debuglog "Databases done"
 dbgps
 
-# Set permissions and ownership defined in the variable, recursively, just in case
+# Set permissions and ownership defined in the variable, recursively. (using full path & restricted to .gz files, as a precaution)
 printf "\n"
 echo "Setting permissions..."
 chmod -R $bkupmode $bkuproot/*.gz
 dbgps
 
-# Remove files that are older then the config allows
+# Remove files that are older then the config allows. (using full path & restricted to .gz files, as a precaution)
 echo "Deleting these files from $bkuproot, that are older than a week..."
 find $bkuproot/*.gz -mtime +$filemage -type f
 find $bkuproot/*.gz -mtime +$filemage -type f -delete
@@ -183,7 +183,7 @@ echo "Switching back"
 cd -
 dbgps
 
-# Finally, subtract the saved UNIX time from the current one, and print it
+# Finally, subtract the saved UNIX timestamp from the current one, and print it
 printf "\n"
 echo "Script took $(($(date +""%s"")-$bkupstart)) seconds to run"
 dbgps
