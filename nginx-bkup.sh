@@ -4,65 +4,30 @@
 # To be able to backup databases, you need a mysql user with these global privileges: SELECT, SHOW DATABASES, LOCK TABLES, RELOAD
 ####################################################################################################
 
-add_option() {
-        eval "$1="$2""
-        optionsc=$(($optionsc + 1))
-}
-add_option "optionsc" "1";
+#add_option() {
+#        eval "$1="$2""
+#        let optionsc++
+#	#optionsc=$(($optionsc + 1))
+#}
+#add_option "optionsc" "1";
 
-#############################
-## CONFIG START ## DO EDIT ##
-#############################
+if [ -f settings ]; then
+	optionsc=$(($optionsc + $(grep "^[^#]" settings | wc -l) + 1))
+	while [ $optionsc -gt 0 ]; do
+		g=$(($g-1))
+		printf "$g\n"
+	done
+	for i in {1..$linec}
+	do
+		echo $i
+		#add_option $(grep "^[^#]" settings | cut -d "=" -f1) $(grep "^[^#]" settings | cut -d "=" -f2)
+	done
+else
+	echo "No settings file"
+	exit
+fi
 
-## ! You must only edit the second argument in each of the add_option lines ! ##
-
-## This is the date format, which will be used in backup names
-add_option "bkupdate" '$(date +""%Y.%m.%d-%H%M.%S"")'
-
-## The UNIX user the backups will be chown-ed to
-## Default: root
-add_option "bkupuser" 'root'
-
-## The UNIX group the backups will be chown-ed to
-## Default: root
-add_option "bkupgroup" 'root'
-
-## The UNIX file permission the backups will be chmod-ed to
-## Default: 400
-add_option "bkupmode" '400'
-
-## The directory to store the backups in
-## Default: /usr/share/nginx/backups
-add_option "bkuproot" '/usr/share/nginx/backups'
-
-## The directory that will be backed up
-## Default: /usr/share/nginx/html
-add_option "webroot" '/usr/share/nginx/html'
-
-## How old should the latest backup be before it's deleted (days)
-## Default: 7
-add_option "filemage" '7'
-
-## Gzip compression level. 1-9
-## For example: 1 is fast, but produces bigger files, and 9 is slow, but produces smaller files
-## Default: 9
-add_option "gziplv" '9'
-
-## The database user that will take the backup, and has the privileges listed on the top
-add_option "dbus" 'database_username'
-
-## The password for the database user
-add_option "dbpw" 'database_password'
-
-## List of databases that won't be backed up, delimited by an escaped pipe | character
-## Default: Database\|information_schema\|performance_schema
-add_option "ignoredbs" "Database\|information_schema\|performance_schema"
-
-## Note: Later, I'd like to make all the options be loaded from an external textfile
-###################################
-## END OF CONFIG ## STOP EDITING ##
-###################################
-
+exit
 ## SCRIPT START ## DO NOT EDIT ##
 # Debug level can go from 0 to 5, and is set from the first argument
 if [ -f $1 ]; then
@@ -127,6 +92,9 @@ cd $bkuproot
 pwd
 printf "\n"
 dbgps
+
+echo "Stopping execution to prevent accidental file creation"
+exit
 
 # Create a tarball with the previously defined ID and the webroot directory name
 echo "Recursively backing up the following folders and files in $webroot:"
