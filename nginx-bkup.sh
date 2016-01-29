@@ -187,6 +187,10 @@ echo "Switching back"
 cd -
 dbgps
 
+#rescan owncloud
+printf "\nRescanning owncloud:\n"
+su -c "php /usr/share/nginx/html/owncloud/console.php files:scan --all" -s /bin/sh nginx
+
 # Finally, subtract the saved UNIX timestamp from the current one, and print it
 printf "\n"
 echo "Script took $(($(date +""%s"")-$bkupstart)) seconds to run"
