@@ -1,5 +1,5 @@
 #!/bin/bash
-# Webdirectory backup script by DecentM modified by boocy93
+# Webdirectory backup script by DecentM
 # This script creates a compressed tarball from your webroot and your databases
 # To be able to backup databases, you need a mysql user with these global privileges: SELECT, SHOW DATABASES, LOCK TABLES, RELOAD
 ####################################################################################################
