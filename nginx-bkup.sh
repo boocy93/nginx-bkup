@@ -78,6 +78,9 @@ add_option "bkupstart" '$(date +""%s"")'
 # the chance of overwriting files is minimal at best
 add_option "bkupid" "$bkupdate-\#$RANDOM"
 
+## Backup name
+add_option "bkupfilename" "$bkupdate_backup_$bkupid"
+
 # Define debugging functions
 # If the debug level is more than 2, we pause at dbgps calls
 dbgps() {
@@ -130,7 +133,7 @@ dbgps
 
 # Create a tarball with the previously defined ID and the webroot directory name
 echo "Recursively backing up the following folders and files in $webroot:"
-tar -cvf "$bkupdir-backup_$bkupid.tar" $webroot | cut -d "/" -f6 | uniq | sort
+tar -cvf "$bkupid_$bkupdir-backup.tar" $webroot | cut -d "/" -f6 | uniq | sort
 dbgps
 
 # Use gzip to compress the created tarball using the strength set in the config
@@ -155,7 +158,7 @@ for I in $(mysql -u$dbus -p$dbpw -e 'show databases' -s --skip-column-names | gr
 
         # ...and use gzip with the appropriate compression level
         echo "Compressing it..."
-        gzip -$gziplv ${I}_database-backup_$bkupid.sql;
+        gzip -$gziplv $bkupid\_database-backup_${I}.sql;
 done
 debuglog "Databases done"
 dbgps
